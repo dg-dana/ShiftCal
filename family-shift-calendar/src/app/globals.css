@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Force 24-hour time format for all time inputs */
+input[type="time"] {
+  color-scheme: light;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0);
+}
+
+/* Hide AM/PM field in all browsers */
+input[type="time"]::-webkit-datetime-edit-ampm-field {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hide AM/PM in Firefox */
+input[type="time"]::-moz-datetime-edit-ampm-field {
+  display: none !important;
+}
+
+/* Force 24-hour format in Chrome */
+input[type="time"]::-webkit-datetime-edit {
+  padding: 0;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+  background: transparent;
+}
+
+/* Ensure 24h format globally */
+html {
+  locale: en-GB;
+}
+
+html[lang="en"] input[type="time"] {
+  format: 24h;
+}
