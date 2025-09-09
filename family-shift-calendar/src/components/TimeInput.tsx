@@ -41,9 +41,9 @@ export default function TimeInput({ value, onChange, name, required, className }
     return { value: hour, label: hour };
   });
 
-  // Generate minutes 00-59 in 15-minute intervals (or all minutes)
-  const minuteOptions = Array.from({ length: 4 }, (_, i) => {
-    const minute = (i * 15).toString().padStart(2, '0');
+  // Generate minutes 00-59
+  const minuteOptions = Array.from({ length: 60 }, (_, i) => {
+    const minute = i.toString().padStart(2, '0');
     return { value: minute, label: minute };
   });
 
