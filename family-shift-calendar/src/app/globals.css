@@ -6,7 +6,8 @@
   --card-bg: #1e293b;
   --border: #334155;
   --border-hover: #475569;
-  --border-accent: #1e40af;
+  --border-accent: #475569;
+  --border-subtle: #3f4956;
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-accent: #60a5fa;
@@ -109,7 +110,7 @@ html[lang="en"] input[type="time"] {
 }
 
 .rbc-calendar * {
-  border-color: var(--border-accent) !important;
+  border-color: var(--border-subtle) !important;
 }
 
 .rbc-calendar table {
@@ -118,13 +119,13 @@ html[lang="en"] input[type="time"] {
 }
 
 .rbc-calendar td {
-  border-right: 2px solid var(--border-accent) !important;
-  border-bottom: 2px solid var(--border-accent) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
 }
 
 .rbc-calendar th {
-  border-right: 2px solid var(--border-accent) !important;
-  border-bottom: 2px solid var(--border-accent) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
 }
 
 .rbc-header {
@@ -147,7 +148,7 @@ html[lang="en"] input[type="time"] {
 
 .rbc-date-cell {
   background: var(--card-bg);
-  border-right: 2px solid var(--border-accent);
+  border-right: 1px solid var(--border-subtle);
   padding: 10px;
   transition: background-color 0.2s ease;
 }
@@ -162,7 +163,7 @@ html[lang="en"] input[type="time"] {
 
 .rbc-day-bg {
   background: var(--card-bg);
-  border-right: 2px solid var(--border-accent);
+  border-right: 1px solid var(--border-subtle);
   transition: background-color 0.2s ease;
 }
 
@@ -175,7 +176,7 @@ html[lang="en"] input[type="time"] {
 }
 
 .rbc-month-row {
-  border-bottom: 2px solid var(--border-accent);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .rbc-month-row:last-child {
@@ -289,7 +290,7 @@ html[lang="en"] input[type="time"] {
 }
 
 .rbc-time-slot {
-  border-top: 1px solid var(--border-accent);
+  border-top: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   transition: background-color 0.2s ease;
 }
@@ -299,7 +300,7 @@ html[lang="en"] input[type="time"] {
 }
 
 .rbc-timeslot-group {
-  border-right: 2px solid var(--border-accent);
+  border-right: 1px solid var(--border-subtle);
 }
 
 .rbc-current-time-indicator {
@@ -311,14 +312,14 @@ html[lang="en"] input[type="time"] {
 
 .rbc-time-gutter .rbc-timeslot-group {
   background: linear-gradient(135deg, var(--background), var(--card-bg));
-  border-right: 2px solid var(--border-accent);
+  border-right: 1px solid var(--border-subtle);
 }
 
 .rbc-time-gutter .rbc-time-slot {
   color: var(--text-accent);
   font-weight: 600;
   text-align: center;
-  border-top: 1px solid var(--border-accent);
+  border-top: 1px solid var(--border-subtle);
 }
 
 /* Event styles */
@@ -393,7 +394,7 @@ html[lang="en"] input[type="time"] {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Force all calendar borders to be dark */
+/* Force all calendar borders to be subtle */
 .rbc-month-view table,
 .rbc-time-view table,
 .rbc-agenda-view table {
@@ -407,7 +408,7 @@ html[lang="en"] input[type="time"] {
 .rbc-time-view thead tr th,
 .rbc-agenda-view tbody tr td,
 .rbc-agenda-view thead tr th {
-  border: 2px solid var(--border-accent) !important;
+  border: 1px solid var(--border-subtle) !important;
 }
 
 /* Override any remaining white/light borders */
@@ -417,32 +418,32 @@ html[lang="en"] input[type="time"] {
 .rbc-calendar .rbc-time-slot,
 .rbc-calendar .rbc-timeslot-group,
 .rbc-calendar .rbc-header {
-  border-color: var(--border-accent) !important;
+  border-color: var(--border-subtle) !important;
 }
 
 /* Additional specific overrides */
 .rbc-day-slot .rbc-events-container {
-  border-color: var(--border-accent) !important;
+  border-color: var(--border-subtle) !important;
 }
 
 .rbc-time-header-content {
-  border-left: 2px solid var(--border-accent) !important;
+  border-left: 1px solid var(--border-subtle) !important;
 }
 
 .rbc-time-content > * {
-  border-color: var(--border-accent) !important;
+  border-color: var(--border-subtle) !important;
 }
 
 /* Week view specific */
 .rbc-time-header .rbc-row {
-  border-bottom: 2px solid var(--border-accent) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
 }
 
 .rbc-time-header .rbc-row .rbc-header {
-  border-left: 2px solid var(--border-accent) !important;
+  border-left: 1px solid var(--border-subtle) !important;
 }
 
 /* Day view specific */
 .rbc-time-content .rbc-time-column {
-  border-left: 2px solid var(--border-accent) !important;
+  border-left: 1px solid var(--border-subtle) !important;
 }
