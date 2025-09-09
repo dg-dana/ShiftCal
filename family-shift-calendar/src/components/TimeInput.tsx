@@ -52,7 +52,14 @@ export default function TimeInput({ value, onChange, name, required, className }
       <select
         value={hours}
         onChange={handleHourChange}
-        className="flex-1 border border-gray-300 rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+        className="flex-1 rounded-md px-2 py-2 focus:outline-none focus:ring-2 text-center transition-all"
+        style={{
+          background: 'var(--background)',
+          border: '1px solid var(--border)',
+          color: 'var(--text-primary)'
+        }}
+        onFocus={(e) => e.target.style.borderColor = 'var(--accent-blue)'}
+        onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
         required={required}
       >
         {hourOptions.map(option => (
@@ -61,11 +68,18 @@ export default function TimeInput({ value, onChange, name, required, className }
           </option>
         ))}
       </select>
-      <span className="flex items-center text-gray-500 font-bold">:</span>
+      <span className="flex items-center font-bold" style={{ color: 'var(--text-secondary)' }}>:</span>
       <select
         value={minutes}
         onChange={handleMinuteChange}
-        className="flex-1 border border-gray-300 rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+        className="flex-1 rounded-md px-2 py-2 focus:outline-none focus:ring-2 text-center transition-all"
+        style={{
+          background: 'var(--background)',
+          border: '1px solid var(--border)',
+          color: 'var(--text-primary)'
+        }}
+        onFocus={(e) => e.target.style.borderColor = 'var(--accent-blue)'}
+        onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
         required={required}
       >
         {minuteOptions.map(option => (

@@ -177,44 +177,88 @@ export default function Calendar() {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="rounded-lg shadow-lg p-6" style={{ 
+        background: 'var(--card-bg)', 
+        border: '1px solid var(--border)' 
+      }}>
         <div className="mb-6 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-800">Schedule Overview</h2>
+          <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+            Schedule Overview
+          </h2>
           <div className="flex gap-2">
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 font-medium text-sm"
+              className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors"
+              style={{ 
+                backgroundColor: 'var(--success)', 
+                borderColor: 'var(--success)' 
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--success-hover)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--success)'}
             >
               + Add Shift
             </button>
             <div className="flex gap-1 ml-4">
               <button
                 onClick={() => setView('month')}
-                className={`px-3 py-2 rounded text-sm font-medium ${
-                  view === 'month' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className="px-3 py-2 rounded text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: view === 'month' ? 'var(--accent-blue)' : 'var(--border)',
+                  color: view === 'month' ? 'white' : 'var(--text-secondary)',
+                  border: `1px solid ${view === 'month' ? 'var(--accent-blue)' : 'var(--border)'}`
+                }}
+                onMouseEnter={(e) => {
+                  if (view !== 'month') {
+                    e.target.style.backgroundColor = 'var(--border-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (view !== 'month') {
+                    e.target.style.backgroundColor = 'var(--border)';
+                  }
+                }}
               >
                 Month
               </button>
               <button
                 onClick={() => setView('week')}
-                className={`px-3 py-2 rounded text-sm font-medium ${
-                  view === 'week' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className="px-3 py-2 rounded text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: view === 'week' ? 'var(--accent-blue)' : 'var(--border)',
+                  color: view === 'week' ? 'white' : 'var(--text-secondary)',
+                  border: `1px solid ${view === 'week' ? 'var(--accent-blue)' : 'var(--border)'}`
+                }}
+                onMouseEnter={(e) => {
+                  if (view !== 'week') {
+                    e.target.style.backgroundColor = 'var(--border-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (view !== 'week') {
+                    e.target.style.backgroundColor = 'var(--border)';
+                  }
+                }}
               >
                 Week
               </button>
               <button
                 onClick={() => setView('day')}
-                className={`px-3 py-2 rounded text-sm font-medium ${
-                  view === 'day' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className="px-3 py-2 rounded text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: view === 'day' ? 'var(--accent-blue)' : 'var(--border)',
+                  color: view === 'day' ? 'white' : 'var(--text-secondary)',
+                  border: `1px solid ${view === 'day' ? 'var(--accent-blue)' : 'var(--border)'}`
+                }}
+                onMouseEnter={(e) => {
+                  if (view !== 'day') {
+                    e.target.style.backgroundColor = 'var(--border-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (view !== 'day') {
+                    e.target.style.backgroundColor = 'var(--border)';
+                  }
+                }}
               >
                 Day
               </button>
