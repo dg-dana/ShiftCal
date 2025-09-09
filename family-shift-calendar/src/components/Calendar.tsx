@@ -198,23 +198,33 @@ export default function Calendar() {
             >
               + Add Shift
             </button>
-            <div className="flex gap-1 ml-4">
+            <div className="flex gap-2 ml-4">
               <button
                 onClick={() => setView('month')}
-                className="px-3 py-2 rounded text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-bold transition-all transform"
                 style={{
-                  backgroundColor: view === 'month' ? 'var(--accent-blue)' : 'var(--border)',
+                  background: view === 'month' 
+                    ? 'linear-gradient(135deg, var(--accent-purple), var(--accent-blue))' 
+                    : 'linear-gradient(135deg, var(--border), var(--border-hover))',
                   color: view === 'month' ? 'white' : 'var(--text-secondary)',
-                  border: `1px solid ${view === 'month' ? 'var(--accent-blue)' : 'var(--border)'}`
+                  border: `2px solid ${view === 'month' ? 'var(--accent-purple)' : 'var(--border-accent)'}`,
+                  boxShadow: view === 'month' ? '0 4px 12px rgba(124, 58, 237, 0.4)' : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                  transform: view === 'month' ? 'scale(1.05)' : 'scale(1)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}
                 onMouseEnter={(e) => {
                   if (view !== 'month') {
-                    e.target.style.backgroundColor = 'var(--border-hover)';
+                    e.target.style.background = 'linear-gradient(135deg, var(--accent-cyan), var(--accent-blue))';
+                    e.target.style.color = 'white';
+                    e.target.style.transform = 'scale(1.02) translateY(-1px)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (view !== 'month') {
-                    e.target.style.backgroundColor = 'var(--border)';
+                    e.target.style.background = 'linear-gradient(135deg, var(--border), var(--border-hover))';
+                    e.target.style.color = 'var(--text-secondary)';
+                    e.target.style.transform = 'scale(1)';
                   }
                 }}
               >
@@ -222,20 +232,30 @@ export default function Calendar() {
               </button>
               <button
                 onClick={() => setView('week')}
-                className="px-3 py-2 rounded text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-bold transition-all transform"
                 style={{
-                  backgroundColor: view === 'week' ? 'var(--accent-blue)' : 'var(--border)',
+                  background: view === 'week' 
+                    ? 'linear-gradient(135deg, var(--accent-cyan), var(--accent-blue))' 
+                    : 'linear-gradient(135deg, var(--border), var(--border-hover))',
                   color: view === 'week' ? 'white' : 'var(--text-secondary)',
-                  border: `1px solid ${view === 'week' ? 'var(--accent-blue)' : 'var(--border)'}`
+                  border: `2px solid ${view === 'week' ? 'var(--accent-cyan)' : 'var(--border-accent)'}`,
+                  boxShadow: view === 'week' ? '0 4px 12px rgba(8, 145, 178, 0.4)' : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                  transform: view === 'week' ? 'scale(1.05)' : 'scale(1)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}
                 onMouseEnter={(e) => {
                   if (view !== 'week') {
-                    e.target.style.backgroundColor = 'var(--border-hover)';
+                    e.target.style.background = 'linear-gradient(135deg, var(--accent-purple), var(--accent-blue))';
+                    e.target.style.color = 'white';
+                    e.target.style.transform = 'scale(1.02) translateY(-1px)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (view !== 'week') {
-                    e.target.style.backgroundColor = 'var(--border)';
+                    e.target.style.background = 'linear-gradient(135deg, var(--border), var(--border-hover))';
+                    e.target.style.color = 'var(--text-secondary)';
+                    e.target.style.transform = 'scale(1)';
                   }
                 }}
               >
@@ -243,20 +263,30 @@ export default function Calendar() {
               </button>
               <button
                 onClick={() => setView('day')}
-                className="px-3 py-2 rounded text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-bold transition-all transform"
                 style={{
-                  backgroundColor: view === 'day' ? 'var(--accent-blue)' : 'var(--border)',
+                  background: view === 'day' 
+                    ? 'linear-gradient(135deg, var(--warning), var(--danger))' 
+                    : 'linear-gradient(135deg, var(--border), var(--border-hover))',
                   color: view === 'day' ? 'white' : 'var(--text-secondary)',
-                  border: `1px solid ${view === 'day' ? 'var(--accent-blue)' : 'var(--border)'}`
+                  border: `2px solid ${view === 'day' ? 'var(--warning)' : 'var(--border-accent)'}`,
+                  boxShadow: view === 'day' ? '0 4px 12px rgba(217, 119, 6, 0.4)' : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                  transform: view === 'day' ? 'scale(1.05)' : 'scale(1)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}
                 onMouseEnter={(e) => {
                   if (view !== 'day') {
-                    e.target.style.backgroundColor = 'var(--border-hover)';
+                    e.target.style.background = 'linear-gradient(135deg, var(--success), var(--accent-cyan))';
+                    e.target.style.color = 'white';
+                    e.target.style.transform = 'scale(1.02) translateY(-1px)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (view !== 'day') {
-                    e.target.style.backgroundColor = 'var(--border)';
+                    e.target.style.background = 'linear-gradient(135deg, var(--border), var(--border-hover))';
+                    e.target.style.color = 'var(--text-secondary)';
+                    e.target.style.transform = 'scale(1)';
                   }
                 }}
               >
