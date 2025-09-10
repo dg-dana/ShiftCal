@@ -55,14 +55,29 @@ export default function Calendar() {
       const response = await fetch('/api/shifts');
       const data = await response.json();
       
-      const formattedEvents = data.map((shift: any) => ({
-        id: shift.id,
-        title: `${shift.user_name} - ${shift.title}`,
-        start: new Date(shift.start_time),
-        end: new Date(shift.end_time),
-        user_name: shift.user_name,
-        user_color: shift.user_color
-      }));
+      const formattedEvents = data.map((shift: any) => {
+        const startDate = new Date(shift.start_time);
+        const endDate = new Date(shift.end_time);
+        
+        console.log('Shift data:', {
+          id: shift.id,
+          title: shift.title,
+          start_time: shift.start_time,
+          end_time: shift.end_time,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        });
+        
+        return {
+          id: shift.id,
+          title: `${shift.user_name} - ${shift.title}`,
+          start: startDate,
+          end: endDate,
+          user_name: shift.user_name,
+          user_color: shift.user_color,
+          allDay: false
+        };
+      });
       
       setEvents(formattedEvents);
     } catch (error) {
@@ -399,6 +414,12 @@ export default function Calendar() {
             style={{ height: '100%' }}
             showMultiDayTimes
             toolbar={false}
+            popup
+            views={{
+              month: true,
+              week: true,
+              day: true
+            }}
           />
         </div>
       </div>
