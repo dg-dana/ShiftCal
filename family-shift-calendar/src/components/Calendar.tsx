@@ -5,6 +5,7 @@ import moment from 'moment';
 import { useState, useEffect } from 'react';
 import AddShiftModal from './AddShiftModal';
 import EditShiftModal from './EditShiftModal';
+import UserManagementModal from './UserManagementModal';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
@@ -31,6 +32,7 @@ export default function Calendar() {
   const [date, setDate] = useState(new Date());
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState<CalendarEvent | null>(null);
 
   useEffect(() => {
@@ -261,6 +263,18 @@ export default function Calendar() {
           </div>
           <div className="flex gap-2">
             <button
+              onClick={() => setIsUserManagementOpen(true)}
+              className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors"
+              style={{ 
+                backgroundColor: 'var(--accent-blue)', 
+                borderColor: 'var(--accent-blue)' 
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-blue-hover)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--accent-blue)'}
+            >
+              👥 Manage Users
+            </button>
+            <button
               onClick={() => setIsAddModalOpen(true)}
               className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors"
               style={{ 
@@ -402,6 +416,12 @@ export default function Calendar() {
         onSave={handleEditShift}
         onDelete={handleDeleteShift}
         shift={selectedShift}
+      />
+
+      <UserManagementModal
+        isOpen={isUserManagementOpen}
+        onClose={() => setIsUserManagementOpen(false)}
+        onUsersChanged={fetchUsers}
       />
     </>
   );

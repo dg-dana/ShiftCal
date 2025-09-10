@@ -122,6 +122,25 @@ export function createUser(name: string, email: string, password: string, color:
   return result.lastInsertRowid as number;
 }
 
+export function updateUser(id: number, name: string, email: string, color: string): void {
+  const db = getDatabase();
+  db.prepare(`
+    UPDATE users 
+    SET name = ?, email = ?, color = ?
+    WHERE id = ?
+  `).run(name, email, color, id);
+}
+
+export function deleteUser(id: number): void {
+  const db = getDatabase();
+  // Delete associated shifts first
+  db.prepare('DELETE FROM shifts WHERE user_id = ?').run(id);
+  // Delete associated templates
+  db.prepare('DELETE FROM shift_templates WHERE user_id = ?').run(id);
+  // Delete user
+  db.prepare('DELETE FROM users WHERE id = ?').run(id);
+}
+
 export function getAllShifts(): ShiftWithUser[] {
   const db = getDatabase();
   return db.prepare(`
