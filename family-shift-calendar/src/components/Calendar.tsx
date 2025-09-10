@@ -397,9 +397,12 @@ export default function Calendar() {
             onSelectEvent={handleSelectEvent}
             eventPropGetter={eventStyleGetter}
             style={{ height: '100%' }}
-            popup
+            popup={false}
             showMultiDayTimes
             toolbar={false}
+            dayLayoutAlgorithm="no-overlap"
+            max={999}
+            doShowMoreDrillDown={false}
           />
         </div>
       </div>
