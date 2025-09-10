@@ -217,22 +217,42 @@ html[lang="en"] input[type="time"] {
   display: none !important;
 }
 
+/* Make sure events are visible in month view */
+.rbc-month-view .rbc-event {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 /* Make month view cells taller to accommodate all events */
 .rbc-month-view .rbc-row-content {
   height: auto !important;
   min-height: 120px !important;
   overflow: visible !important;
+  z-index: 1;
 }
 
 /* Ensure events container doesn't get clipped */
 .rbc-events-container {
   margin-right: 0 !important;
   overflow: visible !important;
+  position: relative !important;
+  z-index: 2;
 }
 
 /* Make day cells flexible height */
 .rbc-month-view .rbc-date-cell {
   min-height: 120px !important;
+  overflow: visible !important;
+  position: relative;
+}
+
+/* Force month view to show all events */
+.rbc-month-view .rbc-row-segment {
+  overflow: visible !important;
+}
+
+.rbc-month-view .rbc-event-content {
   overflow: visible !important;
 }
 
