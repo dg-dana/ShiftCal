@@ -36,9 +36,14 @@ export default function EditShiftModal({ isOpen, onClose, onSave, onDelete, shif
       const startDate = new Date(shift.start);
       const endDate = new Date(shift.end);
       
+      // Format date as dd.mm.yyyy
+      const day = startDate.getDate().toString().padStart(2, '0');
+      const month = (startDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = startDate.getFullYear();
+      
       setFormData({
         title: shift.title,
-        startDate: startDate.toISOString().split('T')[0],
+        startDate: `${day}.${month}.${year}`,
         startTime: startDate.toTimeString().slice(0, 5),
         endTime: endDate.toTimeString().slice(0, 5)
       });
@@ -50,8 +55,12 @@ export default function EditShiftModal({ isOpen, onClose, onSave, onDelete, shif
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
-    const endDateTime = new Date(`${formData.startDate}T${formData.endTime}`);
+    // Convert dd.mm.yyyy to yyyy-mm-dd format for Date constructor
+    const [day, month, year] = formData.startDate.split('.');
+    const isoDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    
+    const startDateTime = new Date(`${isoDateString}T${formData.startTime}`);
+    const endDateTime = new Date(`${isoDateString}T${formData.endTime}`);
 
     onSave({
       id: shift.id,
@@ -136,16 +145,17 @@ export default function EditShiftModal({ isOpen, onClose, onSave, onDelete, shif
               Date
             </label>
             <input
-              type="date"
+              type="text"
               name="startDate"
               value={formData.startDate}
               onChange={handleInputChange}
+              placeholder="dd.mm.yyyy"
+              pattern="\d{2}\.\d{2}\.\d{4}"
               className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-2 transition-all"
               style={{
                 background: 'var(--background)',
                 border: '1px solid var(--border)',
-                color: 'var(--text-primary)',
-                colorScheme: 'dark'
+                color: 'var(--text-primary)'
               }}
               onFocus={(e) => e.target.style.borderColor = 'var(--accent-blue)'}
               onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
@@ -156,7 +166,7 @@ export default function EditShiftModal({ isOpen, onClose, onSave, onDelete, shif
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                Start Time (24h)
+                Start Time
               </label>
               <TimeInput
                 value={formData.startTime}
@@ -167,7 +177,7 @@ export default function EditShiftModal({ isOpen, onClose, onSave, onDelete, shif
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                End Time (24h)
+                End Time
               </label>
               <TimeInput
                 value={formData.endTime}
