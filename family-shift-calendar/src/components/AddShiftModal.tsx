@@ -367,11 +367,18 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                             onClick={() => handleEditTemplate(template)}
                             className="px-2 py-1 text-xs rounded transition-colors"
                             style={{ 
-                              backgroundColor: '#10B981', 
-                              color: 'white' 
+                              backgroundColor: '#374151', 
+                              color: '#9CA3AF',
+                              border: '1px solid #4B5563'
                             }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#10B981'}
+                            onMouseEnter={(e) => {
+                              e.target.style.backgroundColor = '#4B5563';
+                              e.target.style.color = '#E5E7EB';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.backgroundColor = '#374151';
+                              e.target.style.color = '#9CA3AF';
+                            }}
                             title="Edit template"
                           >
                             ✏️
@@ -381,11 +388,18 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                             onClick={() => handleDeleteTemplate(template.id)}
                             className="px-2 py-1 text-xs rounded transition-colors"
                             style={{ 
-                              backgroundColor: '#F59E0B', 
-                              color: 'white' 
+                              backgroundColor: '#374151', 
+                              color: '#9CA3AF',
+                              border: '1px solid #4B5563'
                             }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#D97706'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#F59E0B'}
+                            onMouseEnter={(e) => {
+                              e.target.style.backgroundColor = '#4B5563';
+                              e.target.style.color = '#E5E7EB';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.backgroundColor = '#374151';
+                              e.target.style.color = '#9CA3AF';
+                            }}
                             title="Delete template"
                           >
                             🗑️
