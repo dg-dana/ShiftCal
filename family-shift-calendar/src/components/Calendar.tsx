@@ -182,9 +182,83 @@ export default function Calendar() {
         border: '1px solid var(--border)' 
       }}>
         <div className="mb-6 flex justify-between items-center">
-          <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Schedule Overview
-          </h2>
+          <div className="flex items-center gap-6">
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Schedule Overview
+            </h2>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => {
+                  const newDate = new Date(date);
+                  if (view === 'month') {
+                    newDate.setMonth(newDate.getMonth() - 1);
+                  } else if (view === 'week') {
+                    newDate.setDate(newDate.getDate() - 7);
+                  } else {
+                    newDate.setDate(newDate.getDate() - 1);
+                  }
+                  setDate(newDate);
+                }}
+                className="text-2xl font-bold transition-all transform"
+                style={{ 
+                  color: 'var(--text-accent)',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = 'var(--accent-cyan)';
+                  e.target.style.transform = 'scale(1.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = 'var(--text-accent)';
+                  e.target.style.transform = 'scale(1)';
+                }}
+              >
+                ‹
+              </button>
+              <div className="text-2xl font-bold" style={{ 
+                color: 'var(--text-accent)',
+                background: 'linear-gradient(135deg, var(--text-accent), var(--accent-cyan))',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                minWidth: '300px',
+                textAlign: 'center'
+              }}>
+                {view === 'month' && date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                {view === 'week' && `Week of ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
+                {view === 'day' && date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+              </div>
+              <button
+                onClick={() => {
+                  const newDate = new Date(date);
+                  if (view === 'month') {
+                    newDate.setMonth(newDate.getMonth() + 1);
+                  } else if (view === 'week') {
+                    newDate.setDate(newDate.getDate() + 7);
+                  } else {
+                    newDate.setDate(newDate.getDate() + 1);
+                  }
+                  setDate(newDate);
+                }}
+                className="text-2xl font-bold transition-all transform"
+                style={{ 
+                  color: 'var(--text-accent)',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = 'var(--accent-cyan)';
+                  e.target.style.transform = 'scale(1.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = 'var(--text-accent)';
+                  e.target.style.transform = 'scale(1)';
+                }}
+              >
+                ›
+              </button>
+            </div>
+          </div>
           <div className="flex gap-2">
             <button
               onClick={() => setIsAddModalOpen(true)}
