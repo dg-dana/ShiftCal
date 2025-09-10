@@ -311,6 +311,7 @@ export default function Calendar() {
             style={{ height: '100%' }}
             popup
             showMultiDayTimes
+            toolbar={false}
           />
         </div>
       </div>
