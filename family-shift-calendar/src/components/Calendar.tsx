@@ -397,9 +397,34 @@ export default function Calendar() {
             onSelectEvent={handleSelectEvent}
             eventPropGetter={eventStyleGetter}
             style={{ height: '100%' }}
-            popup
             showMultiDayTimes
             toolbar={false}
+            popup={false}
+            views={['month', 'week', 'day']}
+            components={{
+              month: {
+                event: ({ event }: { event: CalendarEvent }) => (
+                  <div 
+                    className="custom-month-event"
+                    style={{
+                      backgroundColor: event.user_color,
+                      color: 'white',
+                      padding: '2px 4px',
+                      margin: '1px 0',
+                      borderRadius: '3px',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                    onClick={() => handleSelectEvent(event)}
+                  >
+                    {event.title}
+                  </div>
+                )
+              }
+            }}
           />
         </div>
       </div>

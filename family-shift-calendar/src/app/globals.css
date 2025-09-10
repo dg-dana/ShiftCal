@@ -447,3 +447,46 @@ html[lang="en"] input[type="time"] {
 .rbc-time-content .rbc-time-column {
   border-left: 1px solid var(--border-subtle) !important;
 }
+
+/* Month view unlimited events support */
+.rbc-month-row {
+  min-height: 150px !important;
+  height: auto !important;
+}
+
+.rbc-date-cell {
+  min-height: 150px !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.rbc-row-content {
+  height: auto !important;
+  min-height: 120px !important;
+  overflow: visible !important;
+}
+
+.rbc-events-container {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.rbc-row-segment {
+  overflow: visible !important;
+}
+
+.rbc-event {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin-bottom: 2px !important;
+}
+
+.rbc-event-wrapper {
+  margin-bottom: 1px !important;
+}
+
+/* Month view unlimited events support - simplified */
+.rbc-show-more {
+  display: none !important;
+}
