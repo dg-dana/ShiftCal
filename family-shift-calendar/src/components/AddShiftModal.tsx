@@ -51,7 +51,7 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
     memberName: '',
     memberColor: '#3B82F6',
     title: '',
-    startDate: '',
+    dates: '',
     startTime: '06:00',
     endTime: '14:00',
     templateName: ''
@@ -139,44 +139,54 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.startDate || !formData.memberName) {
-      alert('Please fill in all required fields');
-      return;
+    if (mode === 'quick') {
+      if (!formData.dates || !formData.memberName || !selectedTemplate) {
+        alert('Please select a user, template, and enter dates');
+        return;
+      }
+
+      // Parse dates from format "22.9 11.9 20.9" to individual dates
+      const dateStrings = formData.dates.trim().split(/\s+/);
+      const currentYear = new Date().getFullYear();
+
+      // Create shifts for each date
+      for (const dateStr of dateStrings) {
+        if (dateStr.match(/^\d{1,2}\.\d{1,2}$/)) {
+          const [day, month] = dateStr.split('.');
+          const isoDateString = `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          
+          const startDateTime = new Date(`${isoDateString}T${selectedTemplate.start_time}`);
+          const endDateTime = new Date(`${isoDateString}T${selectedTemplate.end_time}`);
+
+          await onSave({
+            memberName: formData.memberName,
+            memberColor: formData.memberColor,
+            title: formData.title || selectedTemplate.name,
+            startTime: startDateTime.toISOString(),
+            endTime: endDateTime.toISOString()
+          });
+        }
+      }
+
+      // Reset form
+      setFormData({
+        memberName: '',
+        memberColor: '#3B82F6',
+        title: '',
+        dates: '',
+        startTime: '06:00',
+        endTime: '14:00',
+        templateName: ''
+      });
+      setSelectedUserId(null);
+      setSelectedTemplate(null);
+      setMode('quick');
+      
+      onClose();
     }
-
-    // Convert dd.mm.yyyy to yyyy-mm-dd format for Date constructor
-    const [day, month, year] = formData.startDate.split('.');
-    const isoDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    
-    const startDateTime = new Date(`${isoDateString}T${formData.startTime}`);
-    const endDateTime = new Date(`${isoDateString}T${formData.endTime}`);
-
-    onSave({
-      memberName: formData.memberName,
-      memberColor: formData.memberColor,
-      title: formData.title,
-      startTime: startDateTime.toISOString(),
-      endTime: endDateTime.toISOString()
-    });
-
-    // Reset form
-    setFormData({
-      memberName: '',
-      memberColor: '#3B82F6',
-      title: '',
-      startDate: '',
-      startTime: '06:00',
-      endTime: '14:00',
-      templateName: ''
-    });
-    setSelectedUserId(null);
-    setSelectedTemplate(null);
-    setMode('quick');
-    
-    onClose();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -263,10 +273,10 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
           {selectedUserId && mode === 'quick' && (
             <>
               {/* Template Selection */}
-              {templates.length > 0 && (
+              {templates.length > 0 ? (
                 <div>
                   <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                    Choose Template (Optional)
+                    Choose Template (Required) <span style={{ color: 'var(--danger)' }}>*</span>
                   </label>
                   <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
                     {templates.map(template => (
@@ -288,6 +298,12 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                       </button>
                     ))}
                   </div>
+                </div>
+              ) : (
+                <div className="p-4 rounded-md" style={{ background: 'var(--warning)', color: 'white' }}>
+                  <p className="text-sm">
+                    No templates found for this user. Please create a template first by switching to "Create Template" mode.
+                  </p>
                 </div>
               )}
 
@@ -312,18 +328,17 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                 />
               </div>
 
-              {/* Date */}
+              {/* Dates */}
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                  Date
+                  Dates (Times from selected template)
                 </label>
                 <input
                   type="text"
-                  name="startDate"
-                  value={formData.startDate}
+                  name="dates"
+                  value={formData.dates}
                   onChange={handleInputChange}
-                  placeholder="dd.mm.yyyy"
-                  pattern="\\d{2}\\.\\d{2}\\.\\d{4}"
+                  placeholder="e.g., 22.9 11.9 20.9 (day.month separated by spaces)"
                   className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-2 transition-all"
                   style={{
                     background: 'var(--background)',
@@ -332,31 +347,8 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                   }}
                   required
                 />
-              </div>
-
-              {/* Time Range */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                    Start Time
-                  </label>
-                  <TimeInput
-                    value={formData.startTime}
-                    onChange={(value) => setFormData(prev => ({ ...prev, startTime: value }))}
-                    name="startTime"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                    End Time
-                  </label>
-                  <TimeInput
-                    value={formData.endTime}
-                    onChange={(value) => setFormData(prev => ({ ...prev, endTime: value }))}
-                    name="endTime"
-                    required
-                  />
+                <div className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+                  Enter multiple dates separated by spaces. Year will be current year ({new Date().getFullYear()}).
                 </div>
               </div>
             </>
@@ -439,12 +431,24 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
               </button>
               <button
                 type="submit"
+                disabled={!selectedTemplate || !formData.dates}
                 className="flex-1 px-4 py-2 text-white rounded-md font-medium transition-colors"
-                style={{ backgroundColor: 'var(--accent-blue)' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-blue-hover)'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--accent-blue)'}
+                style={{ 
+                  backgroundColor: (!selectedTemplate || !formData.dates) ? 'var(--border)' : 'var(--accent-blue)',
+                  cursor: (!selectedTemplate || !formData.dates) ? 'not-allowed' : 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedTemplate && formData.dates) {
+                    e.target.style.backgroundColor = 'var(--accent-blue-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedTemplate && formData.dates) {
+                    e.target.style.backgroundColor = 'var(--accent-blue)';
+                  }
+                }}
               >
-                Add Shift
+                Add Shift{formData.dates && formData.dates.trim().split(/\s+/).filter(d => d.match(/^\d{1,2}\.\d{1,2}$/)).length > 1 ? 's' : ''}
               </button>
             </div>
           )}
