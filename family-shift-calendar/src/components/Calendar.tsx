@@ -399,8 +399,9 @@ export default function Calendar() {
             style={{ height: '100%' }}
             showMultiDayTimes
             toolbar={false}
+            popup={true}
+            popupOffset={30}
             step={60}
-            showAllEvents={true}
           />
         </div>
       </div>
