@@ -212,6 +212,30 @@ html[lang="en"] input[type="time"] {
   background: rgba(51, 65, 85, 0.2) !important;
 }
 
+/* Hide the +X more button completely */
+.rbc-show-more {
+  display: none !important;
+}
+
+/* Make month view cells taller to accommodate all events */
+.rbc-month-view .rbc-row-content {
+  height: auto !important;
+  min-height: 120px !important;
+  overflow: visible !important;
+}
+
+/* Ensure events container doesn't get clipped */
+.rbc-events-container {
+  margin-right: 0 !important;
+  overflow: visible !important;
+}
+
+/* Make day cells flexible height */
+.rbc-month-view .rbc-date-cell {
+  min-height: 120px !important;
+  overflow: visible !important;
+}
+
 .rbc-toolbar {
   background: linear-gradient(135deg, var(--card-bg), var(--background));
   color: var(--text-primary);

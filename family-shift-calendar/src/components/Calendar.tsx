@@ -384,7 +384,7 @@ export default function Calendar() {
           </div>
         </div>
 
-        <div style={{ height: '600px' }}>
+        <div style={{ height: '600px' }} className="calendar-container">
           <BigCalendar
             localizer={localizer}
             events={events}
@@ -400,10 +400,22 @@ export default function Calendar() {
             popup={false}
             showMultiDayTimes
             toolbar={false}
-            dayLayoutAlgorithm="no-overlap"
-            max={999}
-            doShowMoreDrillDown={false}
           />
+          <style jsx>{`
+            .calendar-container :global(.rbc-show-more) {
+              display: none !important;
+            }
+            .calendar-container :global(.rbc-month-view .rbc-row-content) {
+              height: auto !important;
+              min-height: 120px;
+            }
+            .calendar-container :global(.rbc-month-view .rbc-day-bg + .rbc-row-content) {
+              overflow: visible !important;
+            }
+            .calendar-container :global(.rbc-events-container) {
+              margin-right: 0 !important;
+            }
+          `}</style>
         </div>
       </div>
 
