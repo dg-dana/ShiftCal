@@ -193,6 +193,15 @@ export function createShiftTemplate(userId: number, name: string, startTime: str
   return result.lastInsertRowid as number;
 }
 
+export function updateShiftTemplate(id: number, name: string, startTime: string, endTime: string): void {
+  const db = getDatabase();
+  db.prepare(`
+    UPDATE shift_templates 
+    SET name = ?, start_time = ?, end_time = ?
+    WHERE id = ?
+  `).run(name, startTime, endTime, id);
+}
+
 export function deleteShiftTemplate(id: number): void {
   const db = getDatabase();
   db.prepare('DELETE FROM shift_templates WHERE id = ?').run(id);

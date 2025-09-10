@@ -46,6 +46,7 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [templates, setTemplates] = useState<ShiftTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<ShiftTemplate | null>(null);
+  const [editingTemplate, setEditingTemplate] = useState<ShiftTemplate | null>(null);
   
   const [formData, setFormData] = useState({
     memberName: '',
@@ -118,25 +119,84 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
     }
 
     try {
-      const response = await fetch('/api/shift-templates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: selectedUserId,
-          name: formData.templateName,
-          startTime: formData.startTime,
-          endTime: formData.endTime
-        })
+      if (editingTemplate) {
+        // Update existing template
+        const response = await fetch(`/api/shift-templates/${editingTemplate.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.templateName,
+            startTime: formData.startTime,
+            endTime: formData.endTime
+          })
+        });
+
+        if (response.ok) {
+          await fetchTemplates(selectedUserId);
+          setFormData(prev => ({ ...prev, templateName: '' }));
+          setEditingTemplate(null);
+          alert('Template updated successfully!');
+        }
+      } else {
+        // Create new template
+        const response = await fetch('/api/shift-templates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: selectedUserId,
+            name: formData.templateName,
+            startTime: formData.startTime,
+            endTime: formData.endTime
+          })
+        });
+
+        if (response.ok) {
+          await fetchTemplates(selectedUserId);
+          setFormData(prev => ({ ...prev, templateName: '' }));
+          alert('Template created successfully!');
+        }
+      }
+    } catch (error) {
+      console.error('Error saving template:', error);
+    }
+  };
+
+  const handleEditTemplate = (template: ShiftTemplate) => {
+    setEditingTemplate(template);
+    setMode('create-template');
+    setFormData(prev => ({
+      ...prev,
+      templateName: template.name,
+      startTime: template.start_time,
+      endTime: template.end_time
+    }));
+  };
+
+  const handleDeleteTemplate = async (templateId: number) => {
+    if (!confirm('Are you sure you want to delete this template?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/shift-templates/${templateId}`, {
+        method: 'DELETE'
       });
 
       if (response.ok) {
-        await fetchTemplates(selectedUserId);
-        setFormData(prev => ({ ...prev, templateName: '' }));
-        alert('Template created successfully!');
+        await fetchTemplates(selectedUserId!);
+        if (selectedTemplate?.id === templateId) {
+          setSelectedTemplate(null);
+        }
+        alert('Template deleted successfully!');
       }
     } catch (error) {
-      console.error('Error creating template:', error);
+      console.error('Error deleting template:', error);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTemplate(null);
+    setFormData(prev => ({ ...prev, templateName: '' }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -280,22 +340,58 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                   </label>
                   <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
                     {templates.map(template => (
-                      <button
+                      <div
                         key={template.id}
-                        type="button"
-                        onClick={() => handleTemplateSelect(template)}
-                        className="text-left p-2 rounded border transition-colors"
+                        className="flex items-center gap-2 p-2 rounded border"
                         style={{
                           background: selectedTemplate?.id === template.id ? 'var(--accent-blue)' : 'var(--background)',
-                          borderColor: selectedTemplate?.id === template.id ? 'var(--accent-blue)' : 'var(--border)',
-                          color: selectedTemplate?.id === template.id ? 'white' : 'var(--text-primary)'
+                          borderColor: selectedTemplate?.id === template.id ? 'var(--accent-blue)' : 'var(--border)'
                         }}
                       >
-                        <div className="font-medium">{template.name}</div>
-                        <div className="text-xs opacity-75">
-                          {template.start_time} - {template.end_time}
+                        <button
+                          type="button"
+                          onClick={() => handleTemplateSelect(template)}
+                          className="flex-1 text-left transition-colors"
+                          style={{
+                            color: selectedTemplate?.id === template.id ? 'white' : 'var(--text-primary)'
+                          }}
+                        >
+                          <div className="font-medium">{template.name}</div>
+                          <div className="text-xs opacity-75">
+                            {template.start_time} - {template.end_time}
+                          </div>
+                        </button>
+                        <div className="flex gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleEditTemplate(template)}
+                            className="px-2 py-1 text-xs rounded transition-colors"
+                            style={{ 
+                              backgroundColor: 'var(--warning)', 
+                              color: 'white' 
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--warning-hover)'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--warning)'}
+                            title="Edit template"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteTemplate(template.id)}
+                            className="px-2 py-1 text-xs rounded transition-colors"
+                            style={{ 
+                              backgroundColor: 'var(--danger)', 
+                              color: 'white' 
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--danger-hover)'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--danger)'}
+                            title="Delete template"
+                          >
+                            🗑️
+                          </button>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -356,7 +452,12 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
 
           {selectedUserId && mode === 'create-template' && (
             <>
-              {/* Template Creation */}
+              {/* Template Creation/Editing */}
+              <div className="mb-2">
+                <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
+                  {editingTemplate ? 'Edit Template' : 'Create New Template'}
+                </h3>
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                   Template Name
@@ -401,16 +502,32 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleCreateTemplate}
-                className="w-full px-4 py-2 text-white rounded-md font-medium transition-colors"
-                style={{ backgroundColor: 'var(--success)' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--success-hover)'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--success)'}
-              >
-                Save Template
-              </button>
+              <div className="flex gap-3">
+                {editingTemplate && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="flex-1 px-4 py-2 rounded-md font-medium transition-colors"
+                    style={{
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-secondary)',
+                      background: 'var(--background)'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleCreateTemplate}
+                  className="flex-1 px-4 py-2 text-white rounded-md font-medium transition-colors"
+                  style={{ backgroundColor: 'var(--success)' }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--success-hover)'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--success)'}
+                >
+                  {editingTemplate ? 'Update Template' : 'Save Template'}
+                </button>
+              </div>
             </>
           )}
 

@@ -1,5 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deleteShiftTemplate } from '@/lib/database';
+import { updateShiftTemplate, deleteShiftTemplate } from '@/lib/database';
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const templateId = parseInt(params.id);
+    
+    if (isNaN(templateId)) {
+      return NextResponse.json({ error: 'Invalid template ID' }, { status: 400 });
+    }
+
+    const { name, startTime, endTime } = await request.json();
+
+    if (!name || !startTime || !endTime) {
+      return NextResponse.json({ error: 'Name, start time, and end time are required' }, { status: 400 });
+    }
+
+    updateShiftTemplate(templateId, name, startTime, endTime);
+    return NextResponse.json({ message: 'Template updated successfully' });
+  } catch (error) {
+    console.error('Error updating shift template:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
 
 export async function DELETE(
   request: NextRequest,
