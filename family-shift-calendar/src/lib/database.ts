@@ -41,6 +41,19 @@ function initializeDatabase() {
     )
   `);
 
+  // Create shift templates table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS shift_templates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      start_time TEXT NOT NULL,
+      end_time TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    )
+  `);
+
   // Create sample users if none exist
   const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
   
@@ -78,6 +91,15 @@ export interface Shift {
 export interface ShiftWithUser extends Shift {
   user_name: string;
   user_color: string;
+}
+
+export interface ShiftTemplate {
+  id: number;
+  user_id: number;
+  name: string;
+  start_time: string;
+  end_time: string;
+  created_at: string;
 }
 
 export function getAllUsers(): User[] {
@@ -134,4 +156,25 @@ export function updateShift(id: number, title: string, startTime: string, endTim
 export function deleteShift(id: number): void {
   const db = getDatabase();
   db.prepare('DELETE FROM shifts WHERE id = ?').run(id);
+}
+
+// Shift Template functions
+export function getTemplatesByUserId(userId: number): ShiftTemplate[] {
+  const db = getDatabase();
+  return db.prepare('SELECT * FROM shift_templates WHERE user_id = ? ORDER BY name').all(userId) as ShiftTemplate[];
+}
+
+export function createShiftTemplate(userId: number, name: string, startTime: string, endTime: string): number {
+  const db = getDatabase();
+  const result = db.prepare(`
+    INSERT INTO shift_templates (user_id, name, start_time, end_time)
+    VALUES (?, ?, ?, ?)
+  `).run(userId, name, startTime, endTime);
+  
+  return result.lastInsertRowid as number;
+}
+
+export function deleteShiftTemplate(id: number): void {
+  const db = getDatabase();
+  db.prepare('DELETE FROM shift_templates WHERE id = ?').run(id);
 }
