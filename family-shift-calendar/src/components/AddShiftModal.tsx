@@ -367,11 +367,11 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                             onClick={() => handleEditTemplate(template)}
                             className="px-2 py-1 text-xs rounded transition-colors"
                             style={{ 
-                              backgroundColor: '#3B82F6', 
+                              backgroundColor: '#10B981', 
                               color: 'white' 
                             }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#2563EB'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#3B82F6'}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#10B981'}
                             title="Edit template"
                           >
                             ✏️
@@ -381,11 +381,11 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
                             onClick={() => handleDeleteTemplate(template.id)}
                             className="px-2 py-1 text-xs rounded transition-colors"
                             style={{ 
-                              backgroundColor: '#6B7280', 
+                              backgroundColor: '#F59E0B', 
                               color: 'white' 
                             }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#4B5563'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#6B7280'}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#D97706'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#F59E0B'}
                             title="Delete template"
                           >
                             🗑️
