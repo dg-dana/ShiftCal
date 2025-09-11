@@ -58,6 +58,11 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
     templateName: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     if (isOpen) {
       fetchUsers();
@@ -71,22 +76,38 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
   }, [selectedUserId]);
 
   const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    setError(null);
     try {
       const response = await fetch('/api/users');
+      if (!response.ok) {
+        throw new Error('Failed to load users');
+      }
       const data = await response.json();
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
+      setError('Failed to load users. Please try again.');
+    } finally {
+      setIsLoadingUsers(false);
     }
   };
 
   const fetchTemplates = async (userId: number) => {
+    setIsLoadingTemplates(true);
+    setError(null);
     try {
       const response = await fetch(`/api/shift-templates?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to load templates');
+      }
       const data = await response.json();
       setTemplates(data);
     } catch (error) {
       console.error('Error fetching templates:', error);
+      setError('Failed to load templates. Please try again.');
+    } finally {
+      setIsLoadingTemplates(false);
     }
   };
 
@@ -204,17 +225,25 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
     
     if (mode === 'quick') {
       if (!formData.dates || !formData.memberName || !selectedTemplate) {
-        alert('Please select a user, template, and enter dates');
+        setError('Please select a user, template, and enter dates');
         return;
       }
 
-      // Parse dates from format "22.9 11.9 20.9" to individual dates
-      const dateStrings = formData.dates.trim().split(/\s+/);
-      const currentYear = new Date().getFullYear();
+      setIsSubmitting(true);
+      setError(null);
 
-      // Create shifts for each date
-      for (const dateStr of dateStrings) {
-        if (dateStr.match(/^\d{1,2}\.\d{1,2}$/)) {
+      try {
+        // Parse dates from format "22.9 11.9 20.9" to individual dates
+        const dateStrings = formData.dates.trim().split(/\s+/);
+        const currentYear = new Date().getFullYear();
+        const validDates = dateStrings.filter(d => d.match(/^\d{1,2}\.\d{1,2}$/));
+
+        if (validDates.length === 0) {
+          throw new Error('Please enter at least one valid date in format DD.MM');
+        }
+
+        // Create shifts for each date
+        for (const dateStr of validDates) {
           const [day, month] = dateStr.split('.');
           const isoDateString = `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
           
@@ -229,23 +258,28 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
             endTime: endDateTime.toISOString()
           });
         }
-      }
 
-      // Reset form
-      setFormData({
-        memberName: '',
-        memberColor: '#3B82F6',
-        title: '',
-        dates: '',
-        startTime: '06:00',
-        endTime: '14:00',
-        templateName: ''
-      });
-      setSelectedUserId(null);
-      setSelectedTemplate(null);
-      setMode('quick');
-      
-      onClose();
+        // Reset form
+        setFormData({
+          memberName: '',
+          memberColor: '#3B82F6',
+          title: '',
+          dates: '',
+          startTime: '06:00',
+          endTime: '14:00',
+          templateName: ''
+        });
+        setSelectedUserId(null);
+        setSelectedTemplate(null);
+        setMode('quick');
+        
+        onClose();
+      } catch (error) {
+        console.error('Error submitting shifts:', error);
+        setError(error.message || 'Failed to add shifts. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -269,14 +303,48 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
           <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Add New Shift</h2>
           <button
             onClick={onClose}
-            className="transition-colors"
+            disabled={isSubmitting}
+            className="transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ color: 'var(--text-secondary)' }}
-            onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-            onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
+            onMouseEnter={(e) => !isSubmitting && (e.target.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => !isSubmitting && (e.target.style.color = 'var(--text-secondary)')}
           >
             ✕
           </button>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 rounded-lg" style={{ 
+            background: 'var(--danger)',
+            color: 'white',
+            border: '1px solid var(--danger-hover)'
+          }}>
+            <div className="flex items-center gap-2">
+              <span>⚠️</span>
+              <span className="text-sm">{error}</span>
+              <button
+                onClick={() => setError(null)}
+                className="ml-auto text-white hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Loading Indicator */}
+        {isSubmitting && (
+          <div className="mb-4 p-3 rounded-lg text-center" style={{ 
+            background: 'var(--accent-blue)',
+            color: 'white'
+          }}>
+            <div className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span className="text-sm">Adding shifts...</span>
+            </div>
+          </div>
+        )}
 
         {/* Mode Toggle */}
         <div className="mb-6 flex gap-2">
@@ -310,30 +378,45 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
             <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
               Select User
             </label>
-            <select
-              value={selectedUserId || ''}
-              onChange={(e) => handleUserSelect(parseInt(e.target.value))}
-              className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-2 transition-all"
-              style={{
-                background: 'var(--background)',
-                border: '1px solid var(--border)',
-                color: 'var(--text-primary)'
-              }}
-              required
-            >
-              <option value="">Select a user...</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={selectedUserId || ''}
+                onChange={(e) => handleUserSelect(parseInt(e.target.value))}
+                disabled={isLoadingUsers}
+                className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)'
+                }}
+                required
+              >
+                <option value="">{isLoadingUsers ? 'Loading users...' : 'Select a user...'}</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+              {isLoadingUsers && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: 'var(--accent-blue)' }}></div>
+                </div>
+              )}
+            </div>
           </div>
 
           {selectedUserId && mode === 'quick' && (
             <>
               {/* Template Selection */}
-              {templates.length > 0 ? (
+              {isLoadingTemplates ? (
+                <div className="p-4 rounded-lg text-center" style={{ background: 'var(--accent-blue)', color: 'white' }}>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span className="text-sm">Loading templates...</span>
+                  </div>
+                </div>
+              ) : templates.length > 0 ? (
                 <div>
                   <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                     Choose Template (Required) <span style={{ color: 'var(--danger)' }}>*</span>
@@ -562,24 +645,31 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
               </button>
               <button
                 type="submit"
-                disabled={!selectedTemplate || !formData.dates}
-                className="flex-1 px-4 py-2 text-white rounded-md font-medium transition-colors"
+                disabled={!selectedTemplate || !formData.dates || isSubmitting}
+                className="flex-1 px-4 py-2 text-white rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ 
-                  backgroundColor: (!selectedTemplate || !formData.dates) ? 'var(--border)' : 'var(--accent-blue)',
-                  cursor: (!selectedTemplate || !formData.dates) ? 'not-allowed' : 'pointer'
+                  backgroundColor: (!selectedTemplate || !formData.dates || isSubmitting) ? 'var(--border)' : 'var(--accent-blue)',
+                  cursor: (!selectedTemplate || !formData.dates || isSubmitting) ? 'not-allowed' : 'pointer'
                 }}
                 onMouseEnter={(e) => {
-                  if (selectedTemplate && formData.dates) {
+                  if (selectedTemplate && formData.dates && !isSubmitting) {
                     e.target.style.backgroundColor = 'var(--accent-blue-hover)';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (selectedTemplate && formData.dates) {
+                  if (selectedTemplate && formData.dates && !isSubmitting) {
                     e.target.style.backgroundColor = 'var(--accent-blue)';
                   }
                 }}
               >
-                Add Shift{formData.dates && formData.dates.trim().split(/\s+/).filter(d => d.match(/^\d{1,2}\.\d{1,2}$/)).length > 1 ? 's' : ''}
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Adding...
+                  </span>
+                ) : (
+                  `Add Shift${formData.dates && formData.dates.trim().split(/\s+/).filter(d => d.match(/^\d{1,2}\.\d{1,2}$/)).length > 1 ? 's' : ''}`
+                )}
               </button>
             </div>
           )}

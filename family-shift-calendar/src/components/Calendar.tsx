@@ -34,25 +34,50 @@ export default function Calendar() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState<CalendarEvent | null>(null);
+  
+  // Loading and error states
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingShifts, setIsLoadingShifts] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchUsers();
-    fetchShifts();
+    loadInitialData();
   }, []);
+
+  const loadInitialData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await Promise.all([fetchUsers(), fetchShifts()]);
+    } catch (error) {
+      setError('Failed to load calendar data. Please refresh the page.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/users');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.status}`);
+      }
       const data = await response.json();
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
+      setError('Failed to load users');
+      throw error;
     }
   };
 
   const fetchShifts = async () => {
+    setIsLoadingShifts(true);
     try {
       const response = await fetch('/api/shifts');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch shifts: ${response.status}`);
+      }
       const data = await response.json();
       
       const formattedEvents = data.map((shift: any) => ({
@@ -67,6 +92,10 @@ export default function Calendar() {
       setEvents(formattedEvents);
     } catch (error) {
       console.error('Error fetching shifts:', error);
+      setError('Failed to load shifts');
+      throw error;
+    } finally {
+      setIsLoadingShifts(false);
     }
   };
 
@@ -77,6 +106,7 @@ export default function Calendar() {
     startTime: string;
     endTime: string;
   }) => {
+    setError(null);
     try {
       // First, check if user exists or create new user
       let userId = await getOrCreateUser(shiftData.memberName, shiftData.memberColor);
@@ -92,11 +122,15 @@ export default function Calendar() {
         })
       });
 
-      if (response.ok) {
-        fetchShifts(); // Refresh the calendar
+      if (!response.ok) {
+        throw new Error(`Failed to add shift: ${response.status}`);
       }
+
+      await fetchShifts(); // Refresh the calendar
+      setIsAddModalOpen(false);
     } catch (error) {
       console.error('Error adding shift:', error);
+      setError('Failed to add shift. Please try again.');
     }
   };
 
@@ -129,6 +163,7 @@ export default function Calendar() {
   };
 
   const handleEditShift = async (shiftData: any) => {
+    setError(null);
     try {
       const response = await fetch(`/api/shifts/${shiftData.id}`, {
         method: 'PUT',
@@ -140,25 +175,34 @@ export default function Calendar() {
         })
       });
 
-      if (response.ok) {
-        fetchShifts(); // Refresh the calendar
+      if (!response.ok) {
+        throw new Error(`Failed to update shift: ${response.status}`);
       }
+
+      await fetchShifts(); // Refresh the calendar
+      setIsEditModalOpen(false);
     } catch (error) {
       console.error('Error updating shift:', error);
+      setError('Failed to update shift. Please try again.');
     }
   };
 
   const handleDeleteShift = async (shiftId: number) => {
+    setError(null);
     try {
       const response = await fetch(`/api/shifts/${shiftId}`, {
         method: 'DELETE'
       });
 
-      if (response.ok) {
-        fetchShifts(); // Refresh the calendar
+      if (!response.ok) {
+        throw new Error(`Failed to delete shift: ${response.status}`);
       }
+
+      await fetchShifts(); // Refresh the calendar
+      setIsEditModalOpen(false);
     } catch (error) {
       console.error('Error deleting shift:', error);
+      setError('Failed to delete shift. Please try again.');
     }
   };
 
@@ -183,6 +227,39 @@ export default function Calendar() {
         background: 'var(--card-bg)', 
         border: '1px solid var(--border)' 
       }}>
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-4 rounded-lg" style={{ 
+            background: 'var(--danger)',
+            color: 'white',
+            border: '1px solid var(--danger-hover)'
+          }}>
+            <div className="flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{error}</span>
+              <button
+                onClick={loadInitialData}
+                className="ml-auto px-3 py-1 rounded text-sm bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Loading Overlay */}
+        {isLoading && (
+          <div className="mb-4 p-4 rounded-lg text-center" style={{ 
+            background: 'var(--accent-blue)',
+            color: 'white'
+          }}>
+            <div className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <span>Loading calendar...</span>
+            </div>
+          </div>
+        )}
+
         <div className="mb-6 flex justify-between items-center">
           <div className="flex items-center gap-6">
             <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -264,27 +341,36 @@ export default function Calendar() {
           <div className="flex gap-2">
             <button
               onClick={() => setIsUserManagementOpen(true)}
-              className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors"
+              disabled={isLoading}
+              className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ 
                 backgroundColor: 'var(--accent-blue)', 
                 borderColor: 'var(--accent-blue)' 
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-blue-hover)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--accent-blue)'}
+              onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = 'var(--accent-blue-hover)')}
+              onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'var(--accent-blue)')}
             >
               👥 Manage Users
             </button>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors"
+              disabled={isLoading}
+              className="px-4 py-2 rounded-md font-medium text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ 
                 backgroundColor: 'var(--success)', 
                 borderColor: 'var(--success)' 
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--success-hover)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--success)'}
+              onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = 'var(--success-hover)')}
+              onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'var(--success)')}
             >
-              + Add Shift
+              {isLoadingShifts ? (
+                <span className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Adding...
+                </span>
+              ) : (
+                '+ Add Shift'
+              )}
             </button>
             <div className="flex gap-2 ml-4">
               <button
@@ -384,7 +470,7 @@ export default function Calendar() {
           </div>
         </div>
 
-        <div style={{ height: '600px' }}>
+        <div style={{ height: '600px', position: 'relative' }}>
           <BigCalendar
             localizer={localizer}
             events={events}
@@ -396,11 +482,37 @@ export default function Calendar() {
             onNavigate={setDate}
             onSelectEvent={handleSelectEvent}
             eventPropGetter={eventStyleGetter}
-            style={{ height: '100%' }}
+            style={{ height: '100%', opacity: isLoading || isLoadingShifts ? 0.5 : 1 }}
             popup
             showMultiDayTimes
             toolbar={false}
           />
+          
+          {/* Calendar Loading Overlay */}
+          {(isLoading || isLoadingShifts) && (
+            <div 
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ 
+                background: 'rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(2px)',
+                borderRadius: '8px'
+              }}
+            >
+              <div 
+                className="px-6 py-4 rounded-lg flex items-center gap-3"
+                style={{ 
+                  background: 'var(--card-bg)',
+                  border: '2px solid var(--accent-blue)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: 'var(--accent-blue)' }}></div>
+                <span style={{ color: 'var(--text-primary)' }} className="font-medium">
+                  {isLoading ? 'Loading calendar...' : 'Refreshing shifts...'}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
