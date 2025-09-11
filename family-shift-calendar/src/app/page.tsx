@@ -14,7 +14,7 @@ export default function Home() {
               Family Shift Calendar
             </h1>
             <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
-              Manage your family's work schedules
+              Manage your family&apos;s work schedules
             </p>
           </div>
         </div>

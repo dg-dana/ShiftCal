@@ -80,7 +80,14 @@ export default function Calendar() {
       }
       const data = await response.json();
       
-      const formattedEvents = data.map((shift: any) => ({
+      const formattedEvents = data.map((shift: {
+        id: number;
+        user_name: string;
+        title: string;
+        start_time: string;
+        end_time: string;
+        user_color: string;
+      }) => ({
         id: shift.id,
         title: `${shift.user_name} - ${shift.title}`,
         start: new Date(shift.start_time),
@@ -109,7 +116,7 @@ export default function Calendar() {
     setError(null);
     try {
       // First, check if user exists or create new user
-      let userId = await getOrCreateUser(shiftData.memberName, shiftData.memberColor);
+      const userId = await getOrCreateUser(shiftData.memberName, shiftData.memberColor);
       
       const response = await fetch('/api/shifts', {
         method: 'POST',
@@ -162,7 +169,12 @@ export default function Calendar() {
     }
   };
 
-  const handleEditShift = async (shiftData: any) => {
+  const handleEditShift = async (shiftData: {
+    id: number;
+    title: string;
+    startTime: string;
+    endTime: string;
+  }) => {
     setError(null);
     try {
       const response = await fetch(`/api/shifts/${shiftData.id}`, {

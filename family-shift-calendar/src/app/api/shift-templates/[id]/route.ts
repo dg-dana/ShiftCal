@@ -3,10 +3,11 @@ import { updateShiftTemplate, deleteShiftTemplate } from '@/lib/database';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const templateId = parseInt(params.id);
+    const { id } = await params;
+    const templateId = parseInt(id);
     
     if (isNaN(templateId)) {
       return NextResponse.json({ error: 'Invalid template ID' }, { status: 400 });
@@ -28,10 +29,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const templateId = parseInt(params.id);
+    const { id } = await params;
+    const templateId = parseInt(id);
     
     if (isNaN(templateId)) {
       return NextResponse.json({ error: 'Invalid template ID' }, { status: 400 });

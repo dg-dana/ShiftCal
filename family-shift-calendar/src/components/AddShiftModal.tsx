@@ -29,16 +29,6 @@ interface AddShiftModalProps {
   }) => void;
 }
 
-const colorOptions = [
-  { name: 'Blue', value: '#3B82F6' },
-  { name: 'Red', value: '#EF4444' },
-  { name: 'Green', value: '#10B981' },
-  { name: 'Purple', value: '#8B5CF6' },
-  { name: 'Orange', value: '#F59E0B' },
-  { name: 'Pink', value: '#EC4899' },
-  { name: 'Indigo', value: '#6366F1' },
-  { name: 'Teal', value: '#14B8A6' },
-];
 
 export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModalProps) {
   const [mode, setMode] = useState<'quick' | 'create-template'>('quick');
@@ -276,7 +266,7 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
         onClose();
       } catch (error) {
         console.error('Error submitting shifts:', error);
-        setError(error.message || 'Failed to add shifts. Please try again.');
+        setError(error instanceof Error ? error.message : 'Failed to add shifts. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
@@ -306,8 +296,8 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
             disabled={isSubmitting}
             className="transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ color: 'var(--text-secondary)' }}
-            onMouseEnter={(e) => !isSubmitting && (e.target.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => !isSubmitting && (e.target.style.color = 'var(--text-secondary)')}
+            onMouseEnter={(e) => !isSubmitting && ((e.target as HTMLElement).style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => !isSubmitting && ((e.target as HTMLElement).style.color = 'var(--text-secondary)')}
           >
             ✕
           </button>
@@ -495,7 +485,7 @@ export default function AddShiftModal({ isOpen, onClose, onSave }: AddShiftModal
               ) : (
                 <div className="p-4 rounded-md" style={{ background: 'var(--warning)', color: 'white' }}>
                   <p className="text-sm">
-                    No templates found for this user. Please create a template first by switching to "Create Template" mode.
+                    No templates found for this user. Please create a template first by switching to &quot;Create Template&quot; mode.
                   </p>
                 </div>
               )}
