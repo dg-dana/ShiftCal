@@ -448,3 +448,317 @@ html[lang="en"] input[type="time"] {
   border-left: 1px solid var(--border-subtle) !important;
 }
 
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  /* Main container adjustments */
+  body {
+    padding: 10px;
+  }
+
+  /* Calendar header responsive */
+  .mb-6.flex.justify-between.items-center {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  /* Navigation buttons - stack vertically on mobile */
+  .flex.items-center.gap-6 {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .flex.items-center.gap-4 {
+    justify-content: center;
+  }
+
+  /* Date navigation arrows - make bigger for touch */
+  .text-2xl.font-bold.transition-all.transform {
+    font-size: 2.5rem;
+    padding: 10px;
+    min-width: 50px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Date display - smaller on mobile */
+  .text-2xl.font-bold[style*="min-width: 300px"] {
+    font-size: 1.5rem !important;
+    min-width: 200px !important;
+    text-align: center;
+  }
+
+  /* Action buttons - stack and make full width */
+  .flex.gap-2:not(.ml-4) {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .flex.gap-2:not(.ml-4) button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* View selector buttons - horizontal scroll on mobile */
+  .flex.gap-2.ml-4 {
+    margin-left: 0;
+    overflow-x: auto;
+    padding: 10px 0;
+    gap: 10px;
+  }
+
+  .flex.gap-2.ml-4 button {
+    min-width: 80px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  /* Calendar height adjustment for mobile */
+  div[style*="height: 600px"] {
+    height: 400px !important;
+  }
+
+  /* React Big Calendar mobile adjustments */
+  .rbc-calendar {
+    font-size: 12px;
+  }
+
+  .rbc-header {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+
+  .rbc-date-cell {
+    padding: 5px;
+    min-height: 80px !important;
+  }
+
+  .rbc-date-cell a {
+    font-size: 14px;
+  }
+
+  /* Month view mobile */
+  .rbc-month-row {
+    min-height: 80px !important;
+  }
+
+  /* Event styling for mobile */
+  .rbc-event {
+    font-size: 10px !important;
+    padding: 1px 3px !important;
+    margin: 1px 0 !important;
+  }
+
+  /* Week and day view mobile */
+  .rbc-time-view {
+    font-size: 11px;
+  }
+
+  .rbc-time-slot {
+    min-height: 20px;
+  }
+
+  .rbc-time-gutter .rbc-time-slot {
+    font-size: 10px;
+  }
+
+  /* Mobile event hover - disable transform on touch devices */
+  @media (hover: none) {
+    .rbc-event:hover {
+      transform: none !important;
+    }
+  }
+}
+
+/* Tablet responsive (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Calendar header adjustments for tablet */
+  .flex.items-center.gap-6 {
+    gap: 20px;
+  }
+
+  /* Slightly smaller calendar on tablet */
+  div[style*="height: 600px"] {
+    height: 500px !important;
+  }
+
+  /* View selector spacing */
+  .flex.gap-2.ml-4 {
+    gap: 15px;
+  }
+
+  .flex.gap-2.ml-4 button {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (pointer: coarse) {
+  /* Larger touch targets */
+  .rbc-event {
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Larger buttons */
+  button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Disable double-tap zoom on buttons */
+  button, 
+  .rbc-event,
+  .rbc-date-cell a {
+    touch-action: manipulation;
+  }
+}
+
+/* Modal responsive styles */
+@media (max-width: 768px) {
+  /* Modal backdrop and positioning */
+  .fixed.inset-0.bg-black.bg-opacity-70 {
+    padding: 10px;
+  }
+
+  /* Modal container - make it full width on small screens */
+  .rounded-lg.p-6.w-full.max-w-lg.mx-4 {
+    max-width: calc(100vw - 20px) !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+
+  /* Modal header */
+  .flex.justify-between.items-center.mb-4 {
+    margin-bottom: 20px;
+  }
+
+  .flex.justify-between.items-center.mb-4 h2 {
+    font-size: 1.25rem !important;
+  }
+
+  /* Close button - make it bigger for touch */
+  .flex.justify-between.items-center.mb-4 button {
+    font-size: 1.5rem;
+    padding: 8px;
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Mode toggle buttons */
+  .mb-6.flex.gap-2 {
+    margin-bottom: 24px;
+  }
+
+  .mb-6.flex.gap-2 button {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  /* Form sections - adjust spacing */
+  .mb-4, .mb-6 {
+    margin-bottom: 20px;
+  }
+
+  /* Form inputs - make them more touch-friendly */
+  input[type="text"],
+  input[type="time"],
+  select,
+  textarea {
+    min-height: 44px;
+    padding: 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Color selector grid */
+  .grid.grid-cols-4.gap-2 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  /* Color option buttons */
+  .w-8.h-8 {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  /* Template selection */
+  .space-y-2 > div {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  /* Template action buttons */
+  .ml-2.space-x-1 button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* Modal action buttons */
+  .flex.justify-end.gap-2 {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .flex.justify-end.gap-2 button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  /* Scrollable content in modals */
+  .max-h-40.overflow-y-auto {
+    max-height: 200px;
+  }
+}
+
+/* Additional mobile modal improvements */
+@media (max-width: 480px) {
+  /* Very small screens - adjust modal further */
+  .rounded-lg.p-6.w-full.max-w-lg.mx-4 {
+    padding: 15px !important;
+    border-radius: 12px;
+  }
+
+  /* Reduce font sizes slightly on very small screens */
+  .rounded-lg.p-6.w-full.max-w-lg.mx-4 {
+    font-size: 14px;
+  }
+
+  /* Mode toggle - stack on very small screens if needed */
+  .mb-6.flex.gap-2 {
+    gap: 8px;
+  }
+
+  .mb-6.flex.gap-2 button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Prevent modal scroll issues on mobile */
+@media (max-width: 768px) {
+  /* When modal is open, prevent body scroll */
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+
+  /* Ensure modal scrolls properly */
+  .fixed.inset-0.bg-black.bg-opacity-70 {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
