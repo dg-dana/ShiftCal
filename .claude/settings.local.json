@@ -13,7 +13,9 @@
       "Bash(git remote add:*)",
       "Bash(git push:*)",
       "Bash(gh repo create:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm run build:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": [],
     "ask": []
